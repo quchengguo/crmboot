@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.dao.CustomerMapper">
+	<resultMap id="baseMap" type="com.study.pojo.Customer">
+		<id column="cust_id" property="custId" javaType="java.lang.Long"/>
+		<result column="cust_name" property="custName" javaType="java.lang.String"/>
+		<result column="cust_user_id" property="custUserId" javaType="java.lang.Long"/>
+		<result column="cust_create_id" property="custCreateId" javaType="java.lang.Long"/>
+		<result column="cust_source" property="custSource" javaType="java.lang.String"/>
+		<result column="cust_industry" property="custIndustry" javaType="java.lang.String"/>
+		<result column="cust_level" property="custLevel" javaType="java.lang.String"/>
+		<result column="cust_linkman" property="custLinkman" javaType="java.lang.String"/>
+		<result column="cust_phone" property="custPhone" javaType="java.lang.String"/>
+		<result column="cust_mobile" property="custMobile" javaType="java.lang.String"/>
+		<result column="cust_zipcode" property="custZipcode" javaType="java.lang.String"/>
+		<result column="cust_address" property="custAddress" javaType="java.lang.String"/>	
+		<result column="cust_createtime" property="custCreatetime" javaType="java.util.Date"/>
+	</resultMap>
+
+	<select id="getCustomerList" parameterType="com.study.pojo.QueryVo" resultMap="baseMap">
+		SELECT
+			a.cust_id,
+			a.cust_name,
+			a.cust_user_id,
+			a.cust_create_id,
+			b.dict_item_name AS cust_source,
+			c.dict_item_name AS cust_industry,
+			d.dict_item_name AS cust_level,
+			a.cust_linkman,
+			a.cust_phone,
+			a.cust_mobile,
+			a.cust_zipcode,
+			a.cust_address,
+			a.cust_createtime
+		FROM
+			customer a
+		LEFT JOIN base_dict b ON a.cust_source = b.dict_id
+		LEFT JOIN base_dict c ON a.cust_industry = c.dict_id
+		LEFT JOIN base_dict d ON a.cust_level = d.dict_id 
+		<where>
+			<if test="custName !=null and custName !='' ">
+			 and a.cust_name LIKE '%${custName}%'
+			</if>
+			
+			<if test="custSource !=null and custSource !='' ">
+				and  a.cust_source = #{custSource}
+			</if>
+			
+			<if test="custIndustry !=null and custIndustry !='' ">
+				and  a.cust_industry = #{custIndustry}
+			</if>
+			
+			<if test="custLevel !=null and custLevel !='' ">
+				and  a.cust_level = #{custLevel}
+			</if>
+		</where>
+		 limit #{start}, #{size}
+	</select>
+	
+	<!-- 查询 总页数 -->
+	<select id="getTotalResult" parameterType="com.study.pojo.QueryVo" resultType="Integer">
+		SELECT  count(1)
+		FROM customer a  LEFT  JOIN base_dict b 
+		ON a.cust_source = b.dict_id 
+		LEFT JOIN base_dict c ON a.cust_industry = c.dict_id 
+		LEFT JOIN base_dict d ON a.cust_level = d.dict_id 
+		<where>
+			<if test="custName !=null and custName !='' ">
+			 and a.cust_name LIKE '%${custName}%'
+			</if>
+			
+			<if test="custSource !=null and custSource !='' ">
+				and  a.cust_source = #{custSource}
+			</if>
+			
+			<if test="custIndustry !=null and custIndustry !='' ">
+				and  a.cust_industry = #{custIndustry}
+			</if>
+			
+			<if test="custLevel !=null and custLevel !='' ">
+				and  a.cust_level = #{custLevel}
+			</if>
+		 </where>
+	</select>
+	
+	<select id="getCustomerListById" parameterType="Long" resultMap="baseMap">
+		SELECT 
+			*
+		FROM 
+			customer
+		WHERE 
+			cust_id = #{custId}
+	</select>
+	
+	<update id="updateCustomer" parameterType="com.study.pojo.Customer">
+		update customer
+		<set>
+			<if test="custName !=null and custName !='' ">
+				cust_name = #{custName},
+			</if>	
+			
+			<if test="custUserId !=null and custUserId !='' ">
+				cust_user_id = #{custUserId},
+			</if>	
+			<if test="custCreateId !=null and custCreateId !='' ">
+				cust_create_id = #{custCreateId},
+			</if>	
+			
+			<if test="custSource !=null and custSource !='' ">
+				cust_source = #{custSource},
+			</if>	
+			<if test="custIndustry !=null and custIndustry !='' ">
+				cust_industry = #{custIndustry},
+			</if>	
+			<if test="custLevel !=null and custLevel !='' ">
+				cust_level = #{custLevel},
+			</if>	
+			<if test="custLinkman !=null and custLinkman !='' ">
+				cust_linkman = #{custLinkman},
+			</if>	
+			<if test="custPhone !=null and custPhone !='' ">
+				cust_phone = #{custPhone},
+			</if>	
+			<if test="custMobile !=null and custMobile !='' ">
+				cust_mobile = #{custMobile},
+			</if>	
+			<if test="custZipcode !=null and custZipcode !='' ">
+				cust_zipcode = #{custZipcode},
+			</if>	
+			<if test="custAddress !=null and custAddress !='' ">
+				cust_address = #{custAddress},
+			</if>	
+			<if test="custZipcode !=null and custZipcode !='' ">
+				cust_zipcode = #{custZipcode},
+			</if>	
+			<if test="custCreatetime !=null and custCreatetime !='' ">
+				cust_createtime = #{custCreatetime},
+			</if>	
+		</set>
+		<where>
+			 <if test="custId !=null and custId !='' ">
+			 	and  cust_id = #{custId}
+			 </if>
+		</where>
+	</update>
+	
+	<delete id="deleteCustomer" parameterType="Long">
+		DELETE 
+		FROM 
+			customer
+		WHERE 
+			cust_id = #{custId}
+	</delete>
+	
+</mapper>
